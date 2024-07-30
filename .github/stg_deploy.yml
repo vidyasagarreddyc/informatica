@@ -1,0 +1,41 @@
+name: Stage deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: List commits in PR
+        id: list-commits
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          commits=$(gh pr view $pr_number --json commits --jq '.commits[].oid')
+          echo "Commit hashes from stage branch:"
+          echo "$commits"
+          echo "$commits" > commit-hashes.txt
+
+      - name: Save commits to artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: commit-hashes
+          path: commit-hashes.txt
+
+  cd:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo The PR was merged
+    

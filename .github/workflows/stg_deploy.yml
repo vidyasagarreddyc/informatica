@@ -1,41 +1,25 @@
-name: Stage deployment
+name: List Commits from Merged Branch
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types: [opened, synchronize, reopened]
 
 jobs:
-  ci:
+  list-commits:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: List commits in PR
-        id: list-commits
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          pr_number=${{ github.event.pull_request.number }}
-          commits=$(gh pr view $pr_number --json commits --jq '.commits[].oid')
-          echo "Commit hashes from stage branch:"
-          echo "$commits"
-          echo "$commits" > commit-hashes.txt
+    - name: List commits from merged branch
+      run: |
+        # Fetch all branches and tags
+        git fetch --all
 
-      - name: Save commits to artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: commit-hashes
-          path: commit-hashes.txt
+        # Get the name of the merged branch (assuming the branch name is passed as an input)
+        MERGED_BRANCH_NAME="stage"
 
-  cd:
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        echo The PR was merged
-    
+        # List all commits from the merged branch
+        git log main..$MERGED_BRANCH_NAME --oneline

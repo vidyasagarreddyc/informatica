@@ -33,7 +33,7 @@ jobs:
           path: commit-hashes.txt
 
   cd:
-    if: github.event.pull_request.merged == true
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - run: |

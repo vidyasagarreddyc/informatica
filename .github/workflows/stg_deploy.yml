@@ -9,6 +9,8 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    outputs: 
+      commit_ids: ${{ steps.list-commits.outputs.commits }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -24,20 +26,15 @@ jobs:
           commits=$(gh pr view $pr_number --json commits --jq '.commits[].oid')
           echo "Commit hashes from stage branch:"
           echo "$commits"
-          echo "$commits" > commit-hashes.txt
-
-      - name: Save commits to artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: commit-hashes
-          path: commit-hashes.txt
+          echo "commits=$commits" >> "$GITHUB_OUTPUT"
 
   cd:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: ci
     environment: 
        name: STG
     runs-on: ubuntu-latest
     steps:
     - run: |
         echo The PR was merged
+        echo ${{needs.ci.outputs.commit_ids}}
     

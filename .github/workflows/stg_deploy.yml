@@ -45,6 +45,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          ls
           pr_number=${{ github.event.pull_request.number }}
           repo=${{ github.repository }}
           api_url="https://api.github.com/repos/$repo/pulls/${{ needs.ci.outputs.pr_number }}"

@@ -39,6 +39,6 @@ jobs:
         echo The PR was merged
         hashes=${{ needs.ci.outputs.commit_ids }}
         for hash in $hashes; do
-          echo "$hash"
+          echo "testing"
         done
             

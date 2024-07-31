@@ -38,7 +38,7 @@ jobs:
     steps:
     - run: |
         echo The PR was merged
-        Convert the space-separated string into an array
+        # Convert the space-separated string into an array
         echo "${{ needs.ci.outputs.commit_ids }}"
         # IFS=' ' read -r -a hash_array <<< 
         # IFS=' ' read -r -a hash_array <<< ${{ needs.ci.outputs.commit_ids }}

@@ -24,9 +24,10 @@ jobs:
         run: |
           pr_number=${{ github.event.pull_request.number }}
           commits=$(gh pr view $pr_number --json commits --jq '.commits[].oid')
-          echo "Commit hashes from stage branch:"
           commits=$(echo $commits | tr '\n' ',')
           commits_list=${commits%,}
+          echo "Commit hashes from stage branch:"
+          echo "$commits_list"
           echo "commits=$commits_list" >> "$GITHUB_OUTPUT"
 
   cd:

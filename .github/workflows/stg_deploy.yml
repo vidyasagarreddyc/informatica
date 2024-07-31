@@ -38,7 +38,10 @@ jobs:
     - run: |
         echo The PR was merged
         hashes=${{ needs.ci.outputs.commit_ids }}
-        for hash in $hashes; do
-          echo "testing"
+        # Convert the space-separated string into an array
+        IFS=' ' read -r -a hash_array <<< "$hashes"
+        # Loop through each hash and display it
+        for hash in "${hash_array[@]}"; do
+          echo "testing $hash"
         done
             

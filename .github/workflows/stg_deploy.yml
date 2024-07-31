@@ -33,6 +33,7 @@ jobs:
           path: commit-hashes.txt
 
   cd:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: 
        name: STG
     runs-on: ubuntu-latest

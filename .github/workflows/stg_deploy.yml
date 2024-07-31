@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs: 
       commit_ids: ${{ steps.list-commits.outputs.commits }}
+      pr_number:  ${{ steps.list-commits.outputs.pr_number }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -31,9 +32,37 @@ jobs:
           echo "Commit hashes from stage branch:"
           echo "$commits_list"
           echo "commits=$commits_list" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
 
+  wait-for-approval:
+    name: Wait For Approval
+    needs: [ci]
+    runs-on: [self-hosted, aks]
+    environment:
+      name: approval_prod
+    steps:
+      - name: check PR is merged!
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          api_url="https://api.github.com/repos/$repo/pulls/${{ needs.ci.outputs.pr_number }}"
+          
+          # Get PR details
+          response=$(curl -s -H "Authorization: token $GH_TOKEN" $api_url)
+          
+          # Check if the PR is merged
+          merged=$(echo "$response" | jq -r '.merged')
+          
+          if [ "$merged" == "true" ]; then
+            echo "The PR is merged"
+            echo "Approved to deploy changes to stage branch"
+          else
+            echo "The PR is not merged"
+            echo "Approved Failed"
+            exist 1
+          fi
   cd:
-    needs: ci
+    needs: [ci, wait-for-approval]
     environment: 
        name: STG
     runs-on: ubuntu-latest

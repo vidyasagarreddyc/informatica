@@ -37,7 +37,7 @@ jobs:
   wait-for-approval:
     name: Wait For Approval
     needs: [ci]
-    runs-on: [self-hosted, aks]
+    runs-on: ubuntu-latest
     environment: 
        name: STG
     steps:

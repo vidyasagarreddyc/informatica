@@ -42,6 +42,8 @@ jobs:
        name: STG
     steps:
       - name: check PR is merged!
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           pr_number=${{ github.event.pull_request.number }}
           repo=${{ github.repository }}

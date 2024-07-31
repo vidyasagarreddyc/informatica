@@ -39,7 +39,7 @@ jobs:
     - run: |
         echo The PR was merged
         # Loop through each hash and display it
-        for hash in "${{ needs.ci.outputs.commit_ids }}"; do
+        for hash in ${{ needs.ci.outputs.commit_ids }}; do
           echo "testing $hash"
         done
             

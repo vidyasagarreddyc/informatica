@@ -37,5 +37,8 @@ jobs:
     steps:
     - run: |
         echo The PR was merged
-        echo ${{needs.ci.outputs.commit_ids}}
-    
+        hashes=${{needs.ci.outputs.commit_ids}}
+        for hash in $hashes; do
+          echo $hash
+        done
+            

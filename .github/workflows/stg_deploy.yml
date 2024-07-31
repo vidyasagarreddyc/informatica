@@ -41,7 +41,7 @@ jobs:
         # Convert the space-separated string into an array
         echo "${{ needs.ci.outputs.commit_ids }}"
         # IFS=' ' read -r -a hash_array <<< 
-        # IFS=' ' read -r -a hash_array <<< ${{ needs.ci.outputs.commit_ids }}
+        IFS=' ' read -r -a hash_array <<< ${{ needs.ci.outputs.commit_ids }}
         # # Loop through each hash and display it
         # for hash in "${hash_array[@]}"; do
         #   echo "testing $hash"
